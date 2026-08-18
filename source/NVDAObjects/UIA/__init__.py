@@ -37,7 +37,9 @@ from config.configFlags import ReportSpellingErrors
 import speech
 import api
 import eventHandler
+import exceptions
 import textInfos
+import watchdog
 from logHandler import log
 from UIAHandler.types import (
 	IUIAutomationTextRangeT,
@@ -1210,7 +1212,18 @@ class UIA(Window):
 					% ID,
 				)
 		try:
-			cacheElement = self.UIAElement.buildUpdatedCache(cacheRequest)
+			# #20654: a slow provider blocks the core thread here until UIA's internal
+			# timeout expires, and CoCancelCall cannot cancel UIA calls. Run it on the
+			# watchdog's cancellable thread so the core is released sooner.
+			cacheElement = watchdog.cancellableExecute(
+				self.UIAElement.buildUpdatedCache,
+				cacheRequest,
+			)
+		except exceptions.CallCancelled:
+			log.debugWarning(
+				"IUIAutomationElement.buildUpdatedCache cancelled given IDs of %s" % IDs,
+			)
+			return
 		except COMError:
 			log.debugWarning("IUIAutomationElement.buildUpdatedCache failed given IDs of %s" % IDs)
 			return

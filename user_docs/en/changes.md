@@ -59,6 +59,7 @@ By default, when lines are skipped in a large text flood, NVDA emits a beep prop
 This can be disabled in the Advanced settings panel.
 * In Windows Terminal, NVDA is less likely to report stale characters when moving the caret in delayed remote sessions such as SSH. (#19503, @sheldon-im)
 * When an application stops responding, NVDA no longer freezes or floods its log with errors; it stays responsive and drops UIA and MSAA events from the unresponsive application until it recovers. (#16749, @heath-toby)
+* When an application's UI Automation provider is slow to answer, NVDA now recovers from the resulting freeze rather than waiting for UI Automation's own timeout to expire. (#20654, @Khalil220)
 * Reduced lag on UI Automation text change events, improving the responsiveness of controls such as combo boxes and of File Explorer, by using the cached element class name instead of a live cross-process fetch. (#16749, @heath-toby)
 * In Notepad++, NVDA now continues to report IME composition text in speech and braille while selecting or navigating within Chinese IME composition. (#14140, #14152, @keyang556)
 * Fixed UAC slider not being read when changing values with arrow keys in UI Automation. (#9356, @tareh7z)
